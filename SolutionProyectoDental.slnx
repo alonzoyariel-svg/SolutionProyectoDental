@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Proyecto1_Dental.Business/Proyecto1_Dental.Business.csproj" Id="5ebb3320-aa07-4ece-8a43-14dfc4fb685f" />
+  <Project Path="Proyecto1_Dental.Data/Proyecto1_Dental.Data.csproj" Id="828708f2-9440-4e36-90da-76a6647ce63c" />
+  <Project Path="Proyecto1_Dental.Models/Proyecto1_Dental.Models.csproj" Id="fb9d2899-f25c-41bd-8f95-4ca29ff1bd58" />
+  <Project Path="Proyecto1_Dental.Presentation/Proyecto1_Dental.Presentation.csproj" Id="37d62b16-421c-4a97-bb33-932488255f44" />
+  <Project Path="Proyecto1_Dental.UI/Proyecto1_Dental.UI.csproj" Id="3fe4fe65-2afd-437e-90ab-134fdd3736c6" />
+</Solution>
