@@ -1,6 +1,7 @@
 ﻿using Proyecto1_Dental.Business.Services;
 using Proyecto1_Dental.Models.Entities;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Proyecto1_Dental.UI
@@ -17,18 +18,18 @@ namespace Proyecto1_Dental.UI
             this.Load += FormPacientes_Load;
         }
 
-        private void FormPacientes_Load(object sender, EventArgs e)
+        private async void FormPacientes_Load(object sender, EventArgs e)
         {
-            CargarPacientes();
+            await CargarPacientesAsync();
         }
 
-        private void CargarPacientes()
+        private async Task CargarPacientesAsync()
         {
             dgvPacientes.DataSource = null;
-            dgvPacientes.DataSource = _service.ObtenerTodos();
+            dgvPacientes.DataSource = await _service.ObtenerTodosAsync();
         }
 
-        private void btnGuardar_Click(object sender, EventArgs e)
+        private async void btnGuardar_Click(object sender, EventArgs e)
         {
             var nuevo = new Paciente
             {
@@ -39,12 +40,12 @@ namespace Proyecto1_Dental.UI
                 FechaRegistro = DateTime.Now
             };
 
-            _service.Crear(nuevo);
-            CargarPacientes();
+            await _service.CrearAsync(nuevo);
+            await CargarPacientesAsync();
             LimpiarCampos();
         }
 
-        private void btnActualizar_Click(object sender, EventArgs e)
+        private async void btnActualizar_Click(object sender, EventArgs e)
         {
             if (_pacienteSeleccionado == null)
             {
@@ -62,12 +63,12 @@ namespace Proyecto1_Dental.UI
                 FechaRegistro = _pacienteSeleccionado.FechaRegistro
             };
 
-            _service.Actualizar(actualizado);
-            CargarPacientes();
+            await _service.ActualizarAsync(actualizado);
+            await CargarPacientesAsync();
             LimpiarCampos();
         }
 
-        private void btnEliminar_Click(object sender, EventArgs e)
+        private async void btnEliminar_Click(object sender, EventArgs e)
         {
             if (_pacienteSeleccionado == null)
             {
@@ -75,11 +76,11 @@ namespace Proyecto1_Dental.UI
                 return;
             }
 
-            var ok = _service.Eliminar(_pacienteSeleccionado.PacienteID);
+            var ok = await _service.EliminarAsync(_pacienteSeleccionado.PacienteID);
 
             if (ok)
             {
-                CargarPacientes();
+                await CargarPacientesAsync();
                 LimpiarCampos();
             }
             else
@@ -88,11 +89,11 @@ namespace Proyecto1_Dental.UI
             }
         }
 
-        private void btnBuscar_Click(object sender, EventArgs e)
+        private async void btnBuscar_Click(object sender, EventArgs e)
         {
             _pacienteSeleccionado = null;
             dgvPacientes.DataSource = null;
-            dgvPacientes.DataSource = _service.Buscar(txtNombre.Text);
+            dgvPacientes.DataSource = await _service.BuscarAsync(txtNombre.Text);
         }
 
         private void dgvPacientes_CellClick(object sender, DataGridViewCellEventArgs e)
