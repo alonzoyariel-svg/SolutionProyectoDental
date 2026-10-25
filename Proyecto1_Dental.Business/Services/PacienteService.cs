@@ -1,47 +1,42 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Proyecto1_Dental.Models.Entities;
-using Proyecto1_Dental.Business.Services; 
-using Proyecto1_Dental.Business; 
 
 namespace Proyecto1_Dental.Business.Services
 {
-    
     public class PacienteService
     {
-        private readonly BaseService<Paciente> _baseService;
+        private readonly BaseService<Paciente> _baseService = new BaseService<Paciente>();
 
-        public PacienteService()
+        public Task<List<Paciente>> ObtenerTodosAsync()
         {
-            _baseService = new BaseService<Paciente>(); 
+            return _baseService.GetAllAsync();
         }
 
-        public List<Paciente> ObtenerTodos()
+        public Task<Paciente> CrearAsync(Paciente entidad)
         {
-            return _baseService.GetAllAsync().Result;
+            return _baseService.AddAsync(entidad);
         }
 
-        public Paciente Crear(Paciente entidad)
+        public Task<Paciente> ActualizarAsync(Paciente entidad)
         {
-            return _baseService.AddAsync(entidad).Result;
+            return _baseService.UpdateAsync(entidad);
         }
 
-        public Paciente Actualizar(Paciente entidad)
+        public Task<bool> EliminarAsync(int id)
         {
-            return _baseService.UpdateAsync(entidad).Result;
+            return _baseService.DeleteAsync(id);
         }
 
-        public bool Eliminar(int id)
+        public async Task<List<Paciente>> BuscarAsync(string nombre)
         {
-            return _baseService.DeleteAsync(id).Result;
-        }
-
-        public List<Paciente> Buscar(string nombre)
-        {
-            var lista = _baseService.GetAllAsync().Result;
+            var lista = await _baseService.GetAllAsync();
             if (string.IsNullOrWhiteSpace(nombre)) return lista;
-            return lista.Where(p => p.Nombre != null && p.Nombre.IndexOf(nombre, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+
+            return lista.Where(p => p.Nombre != null &&
+                p.Nombre.IndexOf(nombre, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
         }
     }
 }
