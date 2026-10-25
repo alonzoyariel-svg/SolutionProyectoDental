@@ -7,12 +7,14 @@ namespace Proyecto1_Dental.UI
 {
     public partial class FormPacientes : Form
     {
-        private PacienteService _service = new PacienteService();
+        private readonly PacienteService _service = new PacienteService();
+        private Paciente _pacienteSeleccionado;
 
         public FormPacientes()
         {
             InitializeComponent();
-            this.Load += FormPacientes_Load; // asegura que el evento esté suscrito una sola vez
+            dgvPacientes.CellClick += dgvPacientes_CellClick;
+            this.Load += FormPacientes_Load;
         }
 
         private void FormPacientes_Load(object sender, EventArgs e)
@@ -44,7 +46,7 @@ namespace Proyecto1_Dental.UI
 
         private void btnActualizar_Click(object sender, EventArgs e)
         {
-            if (dgvPacientes.SelectedRows.Count == 0)
+            if (_pacienteSeleccionado == null)
             {
                 MessageBox.Show("Seleccione un paciente para actualizar.");
                 return;
@@ -52,31 +54,28 @@ namespace Proyecto1_Dental.UI
 
             var actualizado = new Paciente
             {
+                PacienteID = _pacienteSeleccionado.PacienteID,
                 Nombre = txtNombre.Text,
                 Apellido = txtApellido.Text,
                 Telefono = txtTelefono.Text,
-                Correo = txtCorreo.Text
+                Correo = txtCorreo.Text,
+                FechaRegistro = _pacienteSeleccionado.FechaRegistro
             };
 
             _service.Actualizar(actualizado);
-
             CargarPacientes();
             LimpiarCampos();
-
-
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            if (dgvPacientes.SelectedRows.Count == 0)
+            if (_pacienteSeleccionado == null)
             {
                 MessageBox.Show("Seleccione un paciente para eliminar.");
                 return;
             }
 
-            int index = dgvPacientes.SelectedRows[0].Index;
-
-            var ok = _service.Eliminar(index);
+            var ok = _service.Eliminar(_pacienteSeleccionado.PacienteID);
 
             if (ok)
             {
@@ -91,6 +90,7 @@ namespace Proyecto1_Dental.UI
 
         private void btnBuscar_Click(object sender, EventArgs e)
         {
+            _pacienteSeleccionado = null;
             dgvPacientes.DataSource = null;
             dgvPacientes.DataSource = _service.Buscar(txtNombre.Text);
         }
@@ -100,15 +100,19 @@ namespace Proyecto1_Dental.UI
             if (e.RowIndex < 0) return;
 
             var row = dgvPacientes.Rows[e.RowIndex];
+            _pacienteSeleccionado = row.DataBoundItem as Paciente;
 
-            txtNombre.Text = row.Cells["Nombre"].Value?.ToString();
-            txtApellido.Text = row.Cells["Apellido"].Value?.ToString();
-            txtTelefono.Text = row.Cells["Telefono"].Value?.ToString();
-            txtCorreo.Text = row.Cells["Correo"].Value?.ToString();
+            if (_pacienteSeleccionado == null) return;
+
+            txtNombre.Text = _pacienteSeleccionado.Nombre;
+            txtApellido.Text = _pacienteSeleccionado.Apellido;
+            txtTelefono.Text = _pacienteSeleccionado.Telefono;
+            txtCorreo.Text = _pacienteSeleccionado.Correo;
         }
 
         private void LimpiarCampos()
         {
+            _pacienteSeleccionado = null;
             txtNombre.Clear();
             txtApellido.Clear();
             txtTelefono.Clear();
